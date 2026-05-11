@@ -11,16 +11,27 @@ import Footer from '../component/Footer';
 
 export default function Hero() {
         useEffect(() => {
-        const hash = window.location.hash;
+        const scrollToHash = () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const el = document.querySelector(hash);
+                if (el) {
+                    const navbar = document.querySelector('nav');
+                    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+                    window.scrollTo({ top: el.offsetTop - navbarHeight, behavior: 'smooth' });
+                }
+            }
+        };
 
-        if (hash) {
-        const el = document.querySelector(hash);
-        if (el) {
-            setTimeout(() => {
-            el.scrollIntoView({ behavior: "smooth" });
-            }, 100);
-        }
-        }
+        // Scroll on mount
+        setTimeout(scrollToHash, 100);
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', scrollToHash);
+
+        return () => {
+            window.removeEventListener('hashchange', scrollToHash);
+        };
     }, []);
     return (
         <div className=' md:my-40 md:mx-24' id='hero'>
@@ -36,7 +47,9 @@ export default function Hero() {
                         <MainButton value='VIEW MY WORK' onClick={() => {
                             const section = document.getElementById('projects');
                             if (section) {
-                                section.scrollIntoView({ behavior: 'smooth' })
+                                const navbar = document.querySelector('nav');
+                                const navbarHeight = navbar ? navbar.offsetHeight : 0;
+                                window.scrollTo({ top: section.offsetTop - navbarHeight, behavior: 'smooth' });
                             }
                         }} />
                     </div>
